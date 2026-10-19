@@ -8,8 +8,8 @@ const cliente = { nombre: 'Cliente de prueba', email: 'cliente@gpf-lab.example' 
 describe('PATCH /reservas/:id', () => {
   beforeEach(() => reiniciarStore());
 
-  // Pendiente: se activa en el reto L300 del Lab 1 (Bugfix Spec) y en la rama lab5-inicio (Lab 5).
-  it.skip('rechaza una cantidad negativa sin cambiar el stock', async () => {
+  // Activado en la rama lab5-inicio: el error sigue presente y esta prueba falla.
+  it('rechaza una cantidad negativa sin cambiar el stock', async () => {
     const app = crearApp();
     const creada = await request(app)
       .post('/reservas')
