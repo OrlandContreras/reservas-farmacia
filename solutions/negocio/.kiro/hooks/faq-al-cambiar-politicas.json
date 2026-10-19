@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Actualizar FAQ cuando cambien las políticas",
+      "description": "Lab 3N: regla de negocio escrita en lenguaje natural y convertida en hook.",
+      "trigger": "PostFileSave",
+      "matcher": "negocio/politicas",
+      "action": {
+        "type": "agent",
+        "prompt": "Se modificó una política de retiro en negocio/. Revisa negocio/faq-clientes.md y actualiza las respuestas que ya no coincidan con las políticas. Mantén el tono cercano y breve, y no agregues preguntas nuevas sin avisar."
+      }
+    }
+  ]
+}

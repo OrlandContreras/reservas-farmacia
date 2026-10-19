@@ -1,0 +1,29 @@
+# Lab 6: revisión automática de cada pull request con el agente "reviewer" en modo headless.
+# Requiere el secreto KIRO_API_KEY en el repositorio (planes Pro, Pro+, Pro Max o Power,
+# o API keys habilitadas por el administrador).
+name: Revisión con Kiro
+on: [pull_request]
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: api
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - run: npm ci
+      - name: Instalar Kiro CLI
+        run: curl -fsSL https://cli.kiro.dev/install | bash
+      - name: Revisar el PR
+        env:
+          KIRO_API_KEY: ${{ secrets.KIRO_API_KEY }}
+        run: |
+          kiro-cli chat --v3 --no-interactive --agent reviewer \
+            --trust-tools=read_file,grep_search \
+            "Revisa los cambios de este pull request contra main usando el skill pr-review"

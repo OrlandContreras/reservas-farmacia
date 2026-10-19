@@ -1,0 +1,4 @@
+# Reto del Lab 3: archivos que el agente no debe ver.
+.env
+.env.*
+!.env.example

@@ -1,0 +1,13 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Lint y pruebas al guardar",
+      "description": "Lab 3: corre ESLint --fix y las pruebas relacionadas cuando el agente guarda un archivo TypeScript.",
+      "trigger": "PostFileSave",
+      "matcher": "\\.(ts|tsx)$",
+      "action": { "type": "command", "command": "node scripts/hooks/lint-y-tests.mjs" },
+      "timeout": 120
+    }
+  ]
+}

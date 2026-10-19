@@ -1,0 +1,12 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Suite completa tras cada tarea de la spec",
+      "description": "Reto L300 del Lab 3: corre todas las pruebas y el lint después de cada tarea de una spec.",
+      "trigger": "PostTaskExecution",
+      "action": { "type": "command", "command": "npm test && npm run lint" },
+      "timeout": 180
+    }
+  ]
+}

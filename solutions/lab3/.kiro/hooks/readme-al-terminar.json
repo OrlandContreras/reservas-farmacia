@@ -1,0 +1,14 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Recordar README de la API",
+      "description": "Reto L200 del Lab 3: al terminar su turno, el agente revisa si cambió alguna ruta y actualiza la tabla de endpoints.",
+      "trigger": "Stop",
+      "action": {
+        "type": "agent",
+        "prompt": "Si en este turno agregaste o cambiaste una ruta en src/routes, actualiza la tabla de endpoints de README.md. Si no tocaste rutas, no hagas nada."
+      }
+    }
+  ]
+}

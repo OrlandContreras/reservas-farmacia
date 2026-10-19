@@ -1,0 +1,13 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Proteger .env",
+      "description": "Lab 3: impide que el agente lea o use el archivo .env.",
+      "trigger": "PreToolUse",
+      "matcher": "*",
+      "action": { "type": "command", "command": "node scripts/hooks/proteger-env.mjs" },
+      "timeout": 10
+    }
+  ]
+}

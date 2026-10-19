@@ -1,0 +1,15 @@
+{
+  "name": "reviewer",
+  "description": "Revisa cambios de la API de reservas sin modificar archivos",
+  "tools": ["read", "shell"],
+  "resources": [
+    "file://.kiro/steering/**/*.md",
+    "skill://.kiro/skills/*/SKILL.md"
+  ],
+  "permissions": {
+    "rules": [
+      { "capability": "shell", "match": ["git *", "npm test", "npm run lint"], "effect": "allow" }
+    ]
+  },
+  "prompt": "Eres un revisor estricto de la API de reservas. Nunca editas archivos. Usa el skill pr-review y reporta hallazgos con archivo, línea y severidad."
+}

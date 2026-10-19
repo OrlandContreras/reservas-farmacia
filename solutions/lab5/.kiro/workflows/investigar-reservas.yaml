@@ -1,0 +1,18 @@
+# Lab 5: receta de investigación de solo lectura.
+# Basada en el ejemplo "investigate-question" de https://kiro.dev/docs/workflows/patterns/
+# En el taller no hace falta escribirla: basta pedirle a Kiro el workflow en el chat.
+# Si la guardas aquí, revisa que el agente indicado exista en tu instalación antes de usarla.
+name: investigar-reservas
+inputs:
+  brief: prompt
+  report_path: file
+steps:
+  - type: step
+    id: investigate
+    agent: wf-planner
+    artifacts:
+      report: "{{report_path}}"
+    prompt: >
+      Investigación de solo lectura: no modifiques ningún archivo del proyecto.
+      Investiga {{brief}}. Cita cada hallazgo con archivo y función, señala riesgos
+      (por ejemplo validaciones faltantes o stock negativo) y escribe el informe en {{report_path}}.
