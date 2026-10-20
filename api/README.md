@@ -5,13 +5,15 @@
 ## Correr el proyecto
 
 ```bash
-npm install
+npm install     # o: pnpm install
 npm test        # 3 pruebas pasan y 1 queda pendiente a propósito
 npm run lint
 npm run dev     # http://localhost:3000
 ```
 
 Requiere Node.js 20 o superior.
+
+**Si usas pnpm 11:** pnpm bloquea los scripts de instalación de las dependencias que no estén aprobadas y termina con `ERR_PNPM_IGNORED_BUILDS`. El archivo `pnpm-workspace.yaml` ya aprueba `esbuild` (lo usan `tsx` y `vitest`) con `allowBuilds`, así que `pnpm install` funciona sin pasos extra. Con pnpm, los comandos son `pnpm test`, `pnpm lint` y `pnpm dev`.
 
 ## Endpoints
 

@@ -23,7 +23,7 @@ solutions/    Soluciones de referencia por laboratorio
 
 ```bash
 cd api
-npm install
+npm install  # o pnpm install (pnpm 11 ya queda configurado en api/pnpm-workspace.yaml)
 npm test     # 3 pruebas pasan y 1 queda pendiente a propósito
 npm run lint
 ```
