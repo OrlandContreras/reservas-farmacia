@@ -8,7 +8,7 @@
 | Lab | Módulo | Qué contiene | Dónde copiarlo |
 | --- | --- | --- | --- |
 | 1 | De la necesidad al plan | Spec "reservas que expiran a las 24 horas" y Bugfix Spec del reto L300 | `api/.kiro/specs/` |
-| 2 | El manual de la casa | Steering `product`, `tech`, `structure`, `api-standards` (fileMatch), `troubleshooting` (manual), `reglas-cadena-frio` (auto) y un `AGENTS.md` | `api/.kiro/steering/` y `api/src/routes/` |
+| 2 | El manual de la casa | Steering `product`, `tech`, `structure`, `api-standards` (fileMatch), `troubleshooting` (manual), `reglas-cadena-frio` (auto) y un `AGENTS.md` (guardado como `AGENTS.md.ejemplo` para que Kiro no lo cargue como steering mientras la raíz está abierta) | `api/.kiro/steering/` y `api/src/routes/` |
 | 3 | Reglas automáticas | Hooks de lint y pruebas, protección de `.env`, README al terminar, suite tras cada tarea; scripts y `.kiroignore` | `api/.kiro/hooks/`, `api/scripts/hooks/`, `api/.kiroignore` |
 | 4 | Conectar y estandarizar | MCP `fetch` y skill `pr-review` | `api/.kiro/settings/` y `api/.kiro/skills/` |
 | 5 | Orquestar trabajo de varios pasos | Prompts de los workflows y una receta de ejemplo | `api/.kiro/workflows/` (opcional) |
@@ -20,6 +20,13 @@
 ```bash
 cd reservas-farmacia
 cp -r solutions/lab3/.kiro solutions/lab3/scripts solutions/lab3/.kiroignore api/
+```
+
+Para el Lab 2, el `AGENTS.md` se copia con su nombre real:
+
+```bash
+cp -r solutions/lab2/.kiro api/
+cp solutions/lab2/src/routes/AGENTS.md.ejemplo api/src/routes/AGENTS.md
 ```
 
 ## Qué validar antes del taller
