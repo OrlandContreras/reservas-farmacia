@@ -1,4 +1,23 @@
-# Lab 6 — Ejecución local en modo headless
+# Lab 6 — Kiro CLI: modo interactivo y headless
+
+## Reto L200: modo interactivo (antes del headless)
+
+```bash
+cd api
+kiro-cli chat --agent reviewer
+```
+
+Dentro de la sesión:
+
+| Comando | Para qué |
+| --- | --- |
+| `/tools` | Ver los IDs exactos de las herramientas y cuáles están aprobadas. Úsalos en `--trust-tools` |
+| `/agent list` | Ver los agentes disponibles (debe aparecer `reviewer`) |
+| `/context show` | Ver qué steering y skills cargó el agente |
+| `/model` | Ver o cambiar el modelo |
+| `/quit` | Salir |
+
+## Ejecución en modo headless
 
 ```bash
 cd api

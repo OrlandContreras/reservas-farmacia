@@ -41,10 +41,10 @@ Requiere Node.js 20+, Git y, para el Lab 4, `uv` (servidores MCP con `uvx`).
 
 | Lab | Módulo | Constructores | Negocio |
 | --- | --- | --- | --- |
-| 0 / 0N | Apertura | Correr las pruebas y explorar el panel | Resumen del problema y preguntas |
-| 1 / 1N | Specs | Spec completa y tareas ejecutadas | Requisitos EARS y Analyze Requirements |
-| 2 / 2N | Steering | Estándares de API, antes y después | `product.md` y glosario |
-| 3 / 3N | Hooks | Lint y pruebas al guardar; proteger `.env` | Regla "si cambia una política, actualizar el FAQ" |
-| 4 / 4N | MCP y skills | MCP `fetch` y skill `pr-review` | Skill `resumen-ejecutivo` |
-| 5 / 5N | Workflows | Investigación de solo lectura; reto: corregir hasta verificar | Informe de riesgos en segundo plano |
-| 6 / 6N | Agentes | Agente revisor en headless y CI | Mapa de oportunidades |
+| 0 / 0N | Apertura | Correr las pruebas, explorar el panel y usar `#file` / `#codebase` | Resumen del problema, preguntas y `#file` |
+| 1 / 1N | Specs | Spec completa y tareas ejecutadas; retos Design-First, Quick Spec y Bugfix | Requisitos EARS y Analyze Requirements |
+| 2 / 2N | Steering | Estándares de API, antes y después; retos steering global, auto y AGENTS.md | `product.md` y glosario |
+| 3 / 3N | Hooks | Lint y pruebas al guardar; proteger `.env`; retos Prompt Submit, manual, Post Tool Use y Post Task Execution | Regla "si cambia una política, actualizar el FAQ" |
+| 4 / 4N | MCP, skills y powers | MCP `fetch` y skill `pr-review`; retos opciones de MCP y power propio | Skill `resumen-ejecutivo` |
+| 5 / 5N | Workflows | Investigación de solo lectura; retos: subagentes y corregir hasta verificar | Informe de riesgos en segundo plano |
+| 6 / 6N | Agentes | Agente revisor en CLI interactivo, headless y CI | Mapa de oportunidades |

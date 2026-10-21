@@ -1,0 +1,13 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Registrar comandos del agente",
+      "description": "Reto L300 del Lab 3: después de cada comando de terminal del agente, deja una línea en .kiro/logs/comandos.log.",
+      "trigger": "PostToolUse",
+      "matcher": "shell",
+      "action": { "type": "command", "command": "node scripts/hooks/registrar-comandos.mjs" },
+      "timeout": 10
+    }
+  ]
+}

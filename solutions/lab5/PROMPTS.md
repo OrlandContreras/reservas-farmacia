@@ -16,6 +16,19 @@ En **Workflows**, selecciona el paso y escribe en **Message this step's agent**:
 Incluye también qué pasa si dos clientes reservan la última unidad al mismo tiempo.
 ```
 
+## Reto L200: subagentes frente a workflow
+
+En un chat normal (sin workflow):
+
+```text
+Usa dos subagentes en paralelo: uno revisa src/routes/productos.ts y otro
+src/routes/reservas.ts. Cada uno lista las validaciones que faltan, sin modificar
+archivos. Luego une los dos resultados en una sola tabla.
+```
+
+Compara: los subagentes terminan dentro del mismo turno y devuelven el resultado al chat;
+el workflow corre en segundo plano, con pasos, revisiones y ciclos que puedes pausar.
+
 ## Reto L300: corregir hasta verificar (rama lab5-inicio)
 
 ```bash

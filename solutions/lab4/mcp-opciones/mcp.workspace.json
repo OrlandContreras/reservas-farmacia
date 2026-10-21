@@ -1,0 +1,15 @@
+{
+  "mcpServers": {
+    "fetch": {
+      "command": "uvx",
+      "args": ["mcp-server-fetch"],
+      "disabled": false,
+      "autoApprove": ["fetch"]
+    },
+    "aws-knowledge": {
+      "url": "https://knowledge-mcp.global.api.aws",
+      "disabled": false,
+      "disabledTools": ["aws___recommend"]
+    }
+  }
+}

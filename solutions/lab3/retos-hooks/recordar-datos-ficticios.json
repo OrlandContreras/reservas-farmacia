@@ -1,0 +1,14 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Recordar regla de datos ficticios",
+      "description": "Reto L200 del Lab 3: en cada pedido, recuerda al agente que no use ni pida datos reales.",
+      "trigger": "PromptSubmit",
+      "action": {
+        "type": "agent",
+        "prompt": "Recuerda: todo el material del taller es ficticio. Si el pedido incluye o solicita datos reales de clientes, pacientes, precios o inventario, no los uses y avisa al usuario."
+      }
+    }
+  ]
+}

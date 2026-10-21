@@ -1,0 +1,14 @@
+{
+  "version": "v1",
+  "hooks": [
+    {
+      "name": "Revisar pendientes antes del PR",
+      "description": "Reto L200 del Lab 3: hook manual. Se ejecuta con el botón de play del panel Agent Hooks.",
+      "trigger": "Manual",
+      "action": {
+        "type": "agent",
+        "prompt": "Busca en src/ y tests/ comentarios TODO o FIXME y pruebas con .skip. Entrega una tabla con archivo, línea y qué falta. No modifiques archivos."
+      }
+    }
+  ]
+}
