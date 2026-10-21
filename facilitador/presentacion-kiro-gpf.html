@@ -1,0 +1,797 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Kiro · Workshop Corporación GPF</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+/*
+  Identidad: línea visual SoftwareOne (blanco y negro), con el logo oficial incrustado en el script.
+  --accent es un color de acento provisional: reemplázalo por el color oficial de la guía de marca.
+*/
+:root{
+  --ink:#0A0A0A; --paper:#FFFFFF; --muted:#5C5C5C; --line:#E2E2E2; --soft:#F4F4F4;
+  --accent:#0A0A0A; --accent-ink:#FFFFFF;
+  --w:1280px; --h:720px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;background:#1b1b1b;font-family:Inter,"Segoe UI",Helvetica,Arial,sans-serif;color:var(--ink);-webkit-font-smoothing:antialiased}
+#stage{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;overflow:hidden}
+#deck{width:var(--w);height:var(--h);position:relative;transform-origin:center center}
+.slide{position:absolute;inset:0;background:var(--paper);padding:92px 88px 70px;display:none;flex-direction:column;overflow:hidden}
+.slide.active{display:flex}
+.slide.dark{background:var(--ink);color:var(--paper)}
+/* cabecera y pie */
+.top{position:absolute;top:30px;left:88px;right:88px;display:flex;justify-content:space-between;align-items:center;font-size:14px;letter-spacing:.02em;color:var(--muted)}
+.dark .top{color:#A8A8A8}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:18px;color:var(--ink);letter-spacing:-.01em}
+.dark .brand{color:var(--paper)}
+.brand img{height:26px;display:block}
+.foot{position:absolute;bottom:26px;left:88px;right:88px;display:flex;justify-content:space-between;font-size:13px;color:var(--muted)}
+.dark .foot{color:#8C8C8C}
+/* tipografía */
+.kicker{font-size:15px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);margin-bottom:18px}
+.dark .kicker{color:#A8A8A8}
+h1{font-size:68px;line-height:1.02;font-weight:800;letter-spacing:-.03em}
+h2{font-size:44px;line-height:1.08;font-weight:800;letter-spacing:-.025em;margin-bottom:14px}
+h3{font-size:22px;font-weight:700;letter-spacing:-.01em;margin-bottom:8px}
+p.lead{font-size:24px;line-height:1.4;color:var(--muted);max-width:1000px}
+.dark p.lead{color:#C8C8C8}
+.dark .small{color:#A8A8A8}
+p,li{font-size:19px;line-height:1.45}
+.small{font-size:15px;color:var(--muted)}
+ol.steps{list-style:none;counter-reset:s;display:flex;flex-direction:column;gap:10px}
+ol.steps li{counter-increment:s;position:relative;padding-left:40px;font-size:18px;line-height:1.4}
+ol.steps li::before{content:counter(s);position:absolute;left:0;top:1px;width:26px;height:26px;border-radius:50%;background:var(--ink);color:var(--paper);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center}
+ul.dots{list-style:none;display:flex;flex-direction:column;gap:10px}
+ul.dots li{position:relative;padding-left:22px}
+ul.dots li::before{content:"";position:absolute;left:0;top:11px;width:8px;height:8px;background:var(--ink)}
+.dark ul.dots li::before{background:var(--paper)}
+code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:.88em;background:var(--soft);padding:1px 6px;border-radius:4px}
+.q{background:var(--soft);padding:1px 6px;border-radius:4px;font-weight:500}
+.route.c .q{background:#fff}
+/* portada y secciones */
+.cover{justify-content:flex-end}
+.cover h1{font-size:76px;max-width:1110px}
+.cover .meta{margin-top:34px;display:flex;gap:40px;font-size:18px;color:#C8C8C8}
+.cover .meta b{display:block;color:var(--paper);font-weight:700}
+.rule{width:96px;height:6px;background:var(--paper);margin-bottom:30px}
+.section{justify-content:center}
+.section .num{font-size:180px;font-weight:800;letter-spacing:-.06em;line-height:.9;color:#2E2E2E;margin-bottom:10px}
+.section h1{font-size:72px}
+.section .topic{margin-top:22px;font-size:22px;color:#BDBDBD;max-width:900px}
+/* rejillas y tarjetas */
+.body{flex:1;display:flex;flex-direction:column;justify-content:center;gap:26px}
+.grid{display:grid;gap:18px}
+.g2{grid-template-columns:1fr 1fr}.g3{grid-template-columns:repeat(3,1fr)}.g4{grid-template-columns:repeat(4,1fr)}
+.card{border:1.5px solid var(--line);border-radius:14px;padding:22px 24px;background:var(--paper)}
+.card.ink{background:var(--ink);color:var(--paper);border-color:var(--ink)}
+.card.ink .small{color:#BDBDBD}
+.card.soft{background:var(--soft);border-color:var(--soft)}
+.card .n{font-size:13px;font-weight:700;letter-spacing:.1em;color:var(--muted);margin-bottom:10px}
+.card.ink .n{color:#9A9A9A}
+.card p{font-size:17px;line-height:1.4;color:var(--muted)}
+.card.ink p{color:#D0D0D0}
+.tag{display:inline-block;font-size:12px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;border:1.5px solid currentColor;border-radius:999px;padding:3px 10px;margin-bottom:12px}
+/* agenda */
+.agenda{display:grid;grid-template-columns:1fr 1fr;gap:0 48px}
+.agenda .row{display:grid;grid-template-columns:56px 1fr;gap:14px;padding:15px 0;border-top:1.5px solid var(--line)}
+.agenda .row b{font-size:26px;font-weight:800;letter-spacing:-.02em}
+.agenda .row h3{font-size:20px;margin-bottom:3px}
+.agenda .row p{font-size:15px;color:var(--muted);line-height:1.35}
+/* flujo horizontal */
+.flow{display:flex;align-items:stretch;gap:0}
+.flow .stepbox{flex:1;border:1.5px solid var(--ink);border-radius:14px;padding:20px 20px;position:relative;background:var(--paper)}
+.flow .stepbox.fill{background:var(--ink);color:var(--paper)}
+.flow .stepbox.fill p{color:#D0D0D0}
+.flow .stepbox p{font-size:16px;color:var(--muted);line-height:1.38}
+.flow .arrow{width:42px;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700}
+/* laboratorio */
+.labhead{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:20px}
+.labhead h2{margin-bottom:0}
+.pill{background:var(--ink);color:var(--paper);font-size:13px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:6px 14px;border-radius:999px}
+.routes{display:grid;grid-template-columns:1fr 1fr;gap:20px;flex:1}
+.route{border:1.5px solid var(--line);border-radius:14px;padding:20px 24px;display:flex;flex-direction:column;gap:12px}
+.route.c{background:var(--soft);border-color:var(--soft)}
+.route h3{display:flex;align-items:center;gap:10px;font-size:19px}
+.route h3 span{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--muted)}
+.route ol.steps li{font-size:16.5px}
+.success{margin-top:16px;display:flex;gap:14px;align-items:baseline;border-top:2px solid var(--ink);padding-top:12px}
+.success b{font-size:13px;letter-spacing:.12em;text-transform:uppercase;white-space:nowrap}
+.success p{font-size:17px}
+/* tablas */
+table{width:100%;border-collapse:collapse}
+th{text-align:left;font-size:13px;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);padding:9px 12px;border-bottom:2px solid var(--ink)}
+td{font-size:16.5px;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top;line-height:1.35}
+td:first-child{font-weight:700}
+/* mapa de componentes */
+.hub{display:grid;grid-template-columns:1fr 1.1fr 1fr;gap:18px;align-items:stretch}
+.hub .center{background:var(--ink);color:var(--paper);border-radius:18px;padding:28px;display:flex;flex-direction:column;justify-content:center}
+.hub .center p{color:#D0D0D0;font-size:17px}
+.hub .col{display:flex;flex-direction:column;gap:14px}
+.hub .card{padding:16px 20px}
+.hub .card h3{font-size:19px;margin-bottom:4px}
+.hub .card p{font-size:15px}
+/* comparación */
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.vs .card h3{font-size:24px}
+/* stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:18px}
+.stat{border-top:3px solid var(--ink);padding-top:14px}
+.stat b{display:block;font-size:52px;font-weight:800;letter-spacing:-.03em;line-height:1}
+.stat span{font-size:16px;color:var(--muted)}
+/* notas del facilitador */
+aside.notes{display:none}
+#notes{position:fixed;left:0;right:0;bottom:0;max-height:34vh;overflow:auto;background:#111;color:#EEE;font-size:15px;line-height:1.5;padding:16px 24px 18px;border-top:3px solid #fff;display:none;z-index:20}
+#notes h4{font-size:12px;letter-spacing:.12em;text-transform:uppercase;color:#9A9A9A;margin-bottom:6px}
+body.show-notes #notes{display:block}
+/* controles */
+#ui{position:fixed;right:18px;bottom:16px;display:flex;gap:8px;z-index:30;opacity:0;transition:opacity .3s;pointer-events:none}
+body.ui-on #ui{opacity:1;pointer-events:auto}
+#ui button{background:#fff;color:#111;border:0;border-radius:8px;padding:8px 12px;font:600 13px Inter,sans-serif;cursor:pointer}
+#progress{position:fixed;left:0;top:0;height:4px;background:#fff;z-index:30;transition:width .2s}
+#help{position:fixed;left:18px;bottom:16px;color:#bbb;background:rgba(0,0,0,.7);padding:6px 10px;border-radius:6px;font-size:12px;z-index:30;opacity:0;transition:opacity .3s}
+body.ui-on #help{opacity:1}
+body.show-notes #ui,body.show-notes #help{bottom:calc(34vh + 14px)}
+/* impresión: una diapositiva por página */
+@media print{
+  @page{size:1280px 720px;margin:0}
+  html,body{background:#fff}
+  #stage{position:static;display:block}
+  #deck{transform:none!important;width:auto;height:auto}
+  .slide{display:flex!important;position:relative;width:1280px;height:720px;page-break-after:always;break-after:page}
+  #ui,#progress,#notes,#help{display:none!important}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+}
+</style>
+</head>
+<body>
+<div id="progress"></div>
+<div id="stage"><div id="deck">
+
+<!-- ============ PORTADA ============ -->
+<section class="slide dark cover">
+  <div class="top"><div class="brand" data-logo="white">SoftwareOne</div><div>Workshop teórico-práctico</div></div>
+  <div class="rule"></div>
+  <div class="kicker">Kiro · Corporación GPF</div>
+  <h1>De la idea al agente: construir con Kiro</h1>
+  <div class="meta">
+    <div><b>Formato</b>Teoría breve y laboratorios</div>
+    <div><b>Duración</b>2 horas</div>
+    <div><b>Audiencia</b>Negocio y desarrollo, de L100 a L300</div>
+  </div>
+  <aside class="notes">Bienvenida. Encuesta de mano: ¿quién escribe código?, ¿quién ya usa agentes a diario? Hilo del discurso (Frontier engineering): hoy no vamos a aprender a escribir más rápido, sino a preparar el entorno con el que un agente escribe bien.</aside>
+</section>
+
+<!-- ============ AGENDA ============ -->
+<section class="slide">
+  <div class="top"><div class="brand">SoftwareOne</div><div>Kiro · Corporación GPF</div></div>
+  <div class="kicker">Agenda</div>
+  <h2>Ocho módulos, cada uno con su práctica</h2>
+  <div class="body">
+    <div class="agenda">
+      <div class="row"><b>01</b><div><h3>Apertura y primer contacto</h3><p>El agente de Kiro y sus superficies; chat, contexto y checkpoints</p></div></div>
+      <div class="row"><b>05</b><div><h3>Conectar y estandarizar</h3><p>MCP, Agent Skills y Powers</p></div></div>
+      <div class="row"><b>02</b><div><h3>De la necesidad al plan</h3><p>Specs: requisitos EARS, diseño y tareas; Bugfix Specs</p></div></div>
+      <div class="row"><b>06</b><div><h3>Orquestar trabajo de varios pasos</h3><p>Workflows: pasos, revisiones, ciclos y segundo plano; subagentes</p></div></div>
+      <div class="row"><b>03</b><div><h3>El "manual de la casa"</h3><p>Steering: contexto persistente y modos de inclusión</p></div></div>
+      <div class="row"><b>07</b><div><h3>El agente trabaja solo</h3><p>Custom agents, permisos y Kiro CLI interactivo y headless</p></div></div>
+      <div class="row"><b>04</b><div><h3>Reglas automáticas</h3><p>Hooks: disparadores y acciones; Kiroignore</p></div></div>
+      <div class="row"><b>08</b><div><h3>Cierre</h3><p>Repaso de las capacidades y cómo combinarlas</p></div></div>
+    </div>
+  </div>
+  <div class="foot"><span>SoftwareOne · Kiro</span><span class="pg"></span></div>
+  <aside class="notes">Cada módulo: explicación corta y laboratorio. Los laboratorios se encadenan: lo que se construye en uno se usa en el siguiente.</aside>
+</section>
+
+<!-- ============ OBJETIVOS ============ -->
+<section class="slide">
+  <div class="top"><div class="brand">SoftwareOne</div><div>Kiro · Corporación GPF</div></div>
+  <div class="kicker">Objetivos</div>
+  <h2>Qué se lleva cada participante</h2>
+  <div class="body">
+    <div class="grid g3">
+      <div class="card"><div class="n">01</div><h3>Intención explícita</h3><p>Una necesidad convertida en requisitos verificables, diseño y tareas antes de construir.</p></div>
+      <div class="card"><div class="n">02</div><h3>Contexto persistente</h3><p>El agente conoce a GPF, sus estándares y sus políticas sin repetirlo en cada chat.</p></div>
+      <div class="card"><div class="n">03</div><h3>Reglas que se cumplen solas</h3><p>Calidad, pruebas y seguridad verificadas en cada cambio del agente.</p></div>
+      <div class="card"><div class="n">04</div><h3>Herramientas y procedimientos</h3><p>Conectores y procedimientos del equipo que el agente usa cuando los necesita.</p></div>
+      <div class="card"><div class="n">05</div><h3>Trabajo delegado</h3><p>Procesos de varios pasos que corren en segundo plano, con revisión y verificación.</p></div>
+      <div class="card ink"><div class="n">06</div><h3>Con límites claros</h3><p>Agentes con rol y permisos acotados, también dentro del flujo de entrega.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>SoftwareOne · Kiro</span><span class="pg"></span></div>
+</section>
+
+<!-- ============ FORMATO ============ -->
+<section class="slide">
+  <div class="top"><div class="brand">SoftwareOne</div><div>Kiro · Corporación GPF</div></div>
+  <div class="kicker">Formato</div>
+  <h2>Dos rutas, una misma sala</h2>
+  <div class="body">
+    <div class="grid g2">
+      <div class="card"><span class="tag">Ruta Negocio · sin código</span><h3>Producto, operaciones de farmacia, comercial, analistas, QA funcional</h3><p>Convierte necesidades en requisitos verificables, documenta el contexto de la compañía, define reglas y crea procedimientos reutilizables.</p></div>
+      <div class="card ink"><span class="tag">Ruta Constructores</span><h3>Desarrolladores, de L100 a L300</h3><p>Construye con el agente, automatiza controles de calidad, delega trabajo a workflows y lleva agentes al flujo de entrega.</p></div>
+    </div>
+    <div class="grid g3">
+      <div class="card soft"><h3>En parejas</h3><p>Los requisitos que escribe Negocio alimentan lo que construye Constructores.</p></div>
+      <div class="card soft"><h3>Datos ficticios</h3><p>Ningún dato real de clientes, pacientes, precios ni inventario entra a un prompt.</p></div>
+      <div class="card soft"><h3>Primero la analogía</h3><p>Cada concepto con un ejemplo de negocio, luego con su detalle técnico.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>SoftwareOne · Kiro</span><span class="pg"></span></div>
+  <aside class="notes">Confirmar parejas Negocio + Constructores. Los retos L200 y L300 están en la guía para quien termine antes.</aside>
+</section>
+
+<!-- ============ EL CASO ============ -->
+<section class="slide">
+  <div class="top"><div class="brand">SoftwareOne</div><div>Kiro · Corporación GPF</div></div>
+  <div class="kicker">El caso de la sesión</div>
+  <h2>Reserva y retiro en farmacia</h2>
+  <p class="lead">El cliente reserva un producto en la app y lo retira en el local que elige. Hoy las reservas no vencen y el stock queda bloqueado: vamos a construir la mejora.</p>
+  <div class="body">
+    <div class="stats">
+      <div class="stat"><b>3</b><span>endpoints en la API de reservas de partida</span></div>
+      <div class="stat"><b>20</b><span>productos de venta libre, todos ficticios</span></div>
+      <div class="stat"><b>5</b><span>locales ficticios Fybeca y SanaSana</span></div>
+      <div class="stat"><b>3</b><span>políticas de retiro y un glosario</span></div>
+    </div>
+    <p class="small">Repositorio <code>reservas-farmacia</code>: <code>api/</code> para Constructores y <code>negocio/</code> para la Ruta Negocio. Todos los datos son ficticios.</p>
+  </div>
+  <div class="foot"><span>SoftwareOne · Kiro</span><span class="pg"></span></div>
+  <aside class="notes">El repo tiene un error sembrado en PATCH /reservas/:id (acepta cantidades negativas). No anunciarlo: aparece en el Lab 1 (reto L300) y en el Lab 5.</aside>
+</section>
+
+<!-- ============ GLOSARIO ============ -->
+<section class="slide">
+  <div class="top"><div class="brand">SoftwareOne</div><div>Kiro · Corporación GPF</div></div>
+  <div class="kicker">Glosario de bolsillo</div>
+  <h2>Kiro en palabras de negocio</h2>
+  <div class="body">
+    <table>
+      <tr><th style="width:17%">Término</th><th style="width:43%">Equivalente de negocio</th><th>Ejemplo en GPF</th></tr>
+      <tr><td>Spec</td><td>Pliego de requisitos con plan de trabajo</td><td>"Reservas que expiran a las 24 horas"</td></tr>
+      <tr><td>Requisito EARS</td><td>CUANDO pasa X, EL SISTEMA DEBE Y</td><td>Liberar el stock de una reserva vencida</td></tr>
+      <tr><td>Steering</td><td>Manual de la casa que el agente lee siempre</td><td>Marcas, tono y políticas de retiro</td></tr>
+      <tr><td>Hook</td><td>Regla automática "cada vez que… entonces…"</td><td>Si cambia una política, actualizar el FAQ</td></tr>
+      <tr><td>Skill</td><td>Procedimiento estándar reutilizable</td><td>Resumen ejecutivo para el comité</td></tr>
+      <tr><td>MCP</td><td>Conector a otro sistema</td><td>Leer una guía publicada en la web</td></tr>
+      <tr><td>Workflow</td><td>Proceso con etapas, revisores y criterio de "terminado"</td><td>Investigar riesgos y entregar un informe con citas</td></tr>
+      <tr><td>Agente</td><td>Asistente con rol, reglas y permisos</td><td>Un revisor que solo puede leer</td></tr>
+    </table>
+  </div>
+  <div class="foot"><span>SoftwareOne · Kiro</span><span class="pg"></span></div>
+  <aside class="notes">Volver a esta lámina cada vez que aparezca un término nuevo.</aside>
+</section>
+
+<!-- ============ MÓDULO 01 ============ -->
+<section class="slide dark section">
+  <div class="top"><div class="brand" data-logo="white">SoftwareOne</div><div>Módulo 01</div></div>
+  <div class="num">01</div>
+  <h1>Apertura y primer contacto</h1>
+  <p class="topic">El agente de Kiro y sus superficies · chat, contexto y checkpoints</p>
+</section>
+
+<section class="slide">
+  <div class="top"><div class="brand">SoftwareOne</div><div>01 · Apertura y primer contacto</div></div>
+  <div class="kicker">Cómo funciona Kiro</div>
+  <h2>Un mismo agente en cada superficie</h2>
+  <div class="body">
+    <div class="grid g4">
+      <div class="card"><h3>IDE</h3><p>Editor con chat, specs, hooks y steering integrados.</p></div>
+      <div class="card"><h3>CLI</h3><p>Agente en la terminal, con modo headless para CI.</p></div>
+      <div class="card"><h3>Web</h3><p>Sesiones en la nube que planean, implementan y abren PR.</p></div>
+      <div class="card"><h3>Mobile</h3><p>Seguir tareas y revisar PR desde el teléfono.</p></div>
+    </div>
+    <div class="flow">
+      <div class="stepbox"><h3>Lee</h3><p>El proyecto, el steering y la spec.</p></div>
+      <div class="arrow">→</div>
+      <div class="stepbox"><h3>Planea</h3><p>Qué hacer y en qué orden.</p></div>
+      <div class="arrow">→</div>
+      <div class="stepbox"><h3>Actúa</h3><p>Edita archivos y ejecuta comandos, con permiso.</p></div>
+      <div class="arrow">→</div>
+      <div class="stepbox fill"><h3>Verifica</h3><p>Corre pruebas y corrige. Los checkpoints permiten deshacer.</p></div>
+    </div>
+    <p class="small">En el chat: modo <b>Vibe</b> o <b>Spec</b>, modelo <b>Auto</b> y contexto con <code>#file</code>. <code>.kiro/</code> viaja con el repo.</p>
+  </div>
+  <div class="foot"><span>Fuente: kiro.dev/docs · How Kiro works</span><span class="pg"></span></div>
+  <aside class="notes">Mostrar el panel de Kiro en el IDE: Specs, Agent Hooks, Steering & Skills, MCP. Explicar que hoy trabajaremos en el IDE y, al final, en el CLI.</aside>
+</section>
+
+<section class="slide">
+  <div class="top"><div class="brand">SoftwareOne</div><div>01 · Apertura y primer contacto</div></div>
+  <div class="labhead"><div><div class="kicker">Laboratorio 0</div><h2>Primer contacto</h2></div><span class="pill">Dos rutas</span></div>
+  <div class="routes">
+    <div class="route c">
+      <h3>Constructores <span>api/</span></h3>
+      <ol class="steps">
+        <li>Abre <code>reservas-farmacia/api</code> en Kiro IDE y confía en el workspace.</li>
+        <li>Pide: <span class="q">"Explica la arquitectura de este proyecto y cómo correr los tests"</span>.</li>
+        <li>Pide: <span class="q">"Corre los tests"</span> y aprueba el comando.</li>
+        <li>Recorre el panel de Kiro: Specs, Agent Hooks, Steering &amp; Skills y MCP.</li>
+        <li>Da contexto con <code>#file</code> y <code>#codebase</code>; ubica el modo Vibe/Spec y el selector de modelo.</li>
+      </ol>
+    </div>
+    <div class="route">
+      <h3>Negocio <span>negocio/</span></h3>
+      <ol class="steps">
+        <li>Abre la carpeta <code>reservas-farmacia</code> en Kiro IDE.</li>
+        <li>Pide: <span class="q">"Resume en 5 viñetas el problema de negocio descrito en negocio/"</span>.</li>
+        <li>Pide: <span class="q">"¿Qué preguntas le harías a operaciones antes de construir esto?"</span></li>
+        <li>Señala un documento con <code>#file:negocio/politicas-retiro.md</code>.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="success"><b>Éxito</b><p>Constructores: los tests base pasan. Negocio: un resumen correcto y al menos 3 preguntas útiles.</p></div>
+  <div class="foot"><span>SoftwareOne · Kiro</span><span class="pg"></span></div>
+  <aside class="notes">Si algún test falla, revisar que se haya corrido npm install. Hay un test marcado como pendiente (skip): es intencional. Context providers: escribir # en el chat (#file, #codebase, #terminal, #git diff, #url, #spec). Selector de modelo en Auto; cada pedido consume créditos.</aside>
+</section>
+
+<!-- ============ MÓDULO 02 ============ -->
+<section class="slide dark section">
+  <div class="top"><div class="brand" data-logo="white">SoftwareOne</div><div>Módulo 02</div></div>
+  <div class="num">02</div>
+  <h1>De la necesidad al plan</h1>
+  <p class="topic">Specs: requisitos EARS, diseño y tareas · Analyze Requirements · Bugfix Specs</p>
+</section>
+
+<section class="slide">
+  <div class="top"><div class="brand">SoftwareOne</div><div>02 · De la necesidad al plan</div></div>
+  <div class="kicker">Specs</div>
+  <h2>Antes de escribir código, acordar qué es "terminado"</h2>
+  <div class="body">
+    <div class="flow">
+      <div class="stepbox"><h3>requirements.md</h3><p>Historias de usuario y criterios de aceptación en EARS.</p></div>
+      <div class="arrow">→</div>
+      <div class="stepbox"><h3>design.md</h3><p>Arquitectura, modelo de datos, diagramas y estrategia de pruebas.</p></div>
+      <div class="arrow">→</div>
+      <div class="stepbox fill"><h3>tasks.md</h3><p>Tareas discretas que el agente ejecuta y marca, en olas paralelas.</p></div>
+    </div>
+    <div class="card ink"><div class="n">FORMATO EARS</div><p style="font-size:22px;color:#fff;font-family:ui-monospace,Menlo,Consolas,monospace">WHEN una reserva cumple 24 horas sin ser retirada<br>THE SYSTEM SHALL marcarla como vencida y liberar el stock reservado</p></div>
+    <p class="small">Cada requisito se puede probar con un sí o un no, y se puede rastrear hasta la tarea y el código que lo implementa.</p>
+  </div>
+  <div class="foot"><span>Fuente: kiro.dev/docs · Specs · Feature Specs</span><span class="pg"></span></div>
+</section>
+
+<section class="slide">
+  <div class="top"><div class="brand">SoftwareOne</div><div>02 · De la necesidad al plan</div></div>
+  <div class="kicker">Variantes</div>
+  <h2>Una spec para cada punto de partida</h2>
+  <div class="body">
+    <div class="grid g2">
+      <div class="card"><span class="tag">Requirements-First</span><h3>Se conoce el comportamiento</h3><p>Requisitos → diseño → tareas. Para funcionalidades guiadas por el negocio.</p></div>
+      <div class="card"><span class="tag">Design-First</span><h3>Se conoce la arquitectura</h3><p>Diseño → requisitos → tareas. Para restricciones técnicas o pseudocódigo previo.</p></div>
+      <div class="card"><span class="tag">Quick Spec</span><h3>Funcionalidad bien entendida</h3><p>Genera los tres archivos en una pasada, sin aprobaciones intermedias.</p></div>
+      <div class="card ink"><span class="tag">Bugfix Spec</span><h3>Corregir sin romper</h3><p><code style="background:#333;color:#fff">bugfix.md</code> con comportamiento actual, esperado y el que no debe cambiar.</p></div>
+    </div>
+    <p class="small"><b>Analyze Requirements</b> revisa los requisitos antes del diseño y señala ambigüedades, contradicciones y vacíos.</p>
+  </div>
+  <div class="foot"><span>Fuente: kiro.dev/docs · Specs</span><span class="pg"></span></div>
+</section>
+
+<section class="slide">
+  <div class="top"><div class="brand">SoftwareOne</div><div>02 · De la necesidad al plan</div></div>
+  <div class="labhead"><div><div class="kicker">Laboratorio 1</div><h2>Reservas que expiran a las 24 horas</h2></div><span class="pill">En relevo</span></div>
+  <div class="routes">
+    <div class="route">
+      <h3>Negocio <span>Requisitos</span></h3>
+      <ol class="steps">
+        <li><b>Specs → +</b> → <b>Feature</b> → <b>Requirements-First</b>, con el prompt de la necesidad.</li>
+        <li>Revisa cada requisito: ¿se prueba con un sí o un no?</li>
+        <li>Ejecuta <b>Analyze Requirements</b> y decide cada ambigüedad: horarios, feriados, recetas.</li>
+        <li>Escribe 2 requisitos propios en EARS y pásalos a tu pareja.</li>
+      </ol>
+    </div>
+    <div class="route c">
+      <h3>Constructores <span>Diseño y tareas</span></h3>
+      <ol class="steps">
+        <li>Con los requisitos de tu pareja, genera <code>design.md</code> y revisa modelo, endpoints y pruebas.</li>
+        <li>Genera <code>tasks.md</code> y elige <b>Run all tasks</b>; observa las olas paralelas.</li>
+        <li>Corre los tests.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="success"><b>Éxito</b><p>Los tres archivos de la spec existen, todas las tareas están completas y los tests nuevos pasan.</p></div>
+  <div class="foot"><span>SoftwareOne · Kiro</span><span class="pg"></span></div>
+  <aside class="notes">Prompt: "Una reserva sin retirar expira a las 24 horas y libera el stock. El cliente elige el local de retiro y recibe un aviso cuando está lista. Operaciones puede listar las reservas vencidas por local". Reto L200: Design-First y Quick Spec. Reto L300: Bugfix Spec del error de PATCH /reservas/:id. Discusión: ¿qué decidió la persona y qué decidió el agente?</aside>
+</section>
+
+<!-- ============ MÓDULO 03 ============ -->
+<section class="slide dark section">
+  <div class="top"><div class="brand" data-logo="white">SoftwareOne</div><div>Módulo 03</div></div>
+  <div class="num">03</div>
+  <h1>El "manual de la casa"</h1>
+  <p class="topic">Steering: producto, tecnología y estructura · modos de inclusión · AGENTS.md</p>
+</section>
+
+<section class="slide">
+  <div class="top"><div class="brand">SoftwareOne</div><div>03 · El "manual de la casa"</div></div>
+  <div class="kicker">Steering</div>
+  <h2>Contexto que el agente no olvida</h2>
+  <div class="body">
+    <div class="grid g3">
+      <div class="card"><div class="n">PRODUCT.MD</div><h3>El porqué</h3><p>Propósito, usuarios y objetivos del negocio.</p></div>
+      <div class="card"><div class="n">TECH.MD</div><h3>Con qué</h3><p>Stack, librerías y restricciones técnicas.</p></div>
+      <div class="card"><div class="n">STRUCTURE.MD</div><h3>Dónde y cómo</h3><p>Organización de archivos y convenciones.</p></div>
+    </div>
+    <table>
+      <tr><th style="width:18%">Modo</th><th style="width:44%">Cuándo se carga</th><th>Ideal para</th></tr>
+      <tr><td><code>always</code></td><td>Siempre (por defecto); igual <code>AGENTS.md</code> y el global <code>~/.kiro/steering/</code></td><td>Estándares generales y seguridad</td></tr>
+      <tr><td><code>fileMatch</code></td><td>Al tocar archivos que coinciden con un patrón</td><td>Reglas de API o de pruebas</td></tr>
+      <tr><td><code>manual</code></td><td>Con <code>#nombre</code> o como comando <code>/</code></td><td>Guías de diagnóstico o migración</td></tr>
+      <tr><td><code>auto</code></td><td>Si el pedido coincide con su descripción</td><td>Conocimiento extenso y ocasional</td></tr>
+    </table>
+  </div>
+  <div class="foot"><span>Fuente: kiro.dev/docs · Steering</span><span class="pg"></span></div>
+  <aside class="notes">Workspace en .kiro/steering/, global en ~/.kiro/steering/; el de workspace gana si hay conflicto. AGENTS.md también se carga siempre.</aside>
+</section>
+
+<section class="slide">
+  <div class="top"><div class="brand">SoftwareOne</div><div>03 · El "manual de la casa"</div></div>
+  <div class="labhead"><div><div class="kicker">Laboratorio 2</div><h2>Antes y después del steering</h2></div><span class="pill">Dos rutas</span></div>
+  <div class="routes">
+    <div class="route c">
+      <h3>Constructores <span>Estándares de API</span></h3>
+      <ol class="steps">
+        <li><b>Antes:</b> pide <span class="q">"Agrega un endpoint para que el cliente cancele su reserva"</span>. Guarda el diff y vuelve atrás con un checkpoint.</li>
+        <li><b>Generate Steering Docs</b> y crea <code>api-standards.md</code> con <code>fileMatch</code> sobre <code>src/routes/**/*.ts</code>.</li>
+        <li><b>Después:</b> repite el pedido y compara los dos diffs.</li>
+      </ol>
+    </div>
+    <div class="route">
+      <h3>Negocio <span>Contexto GPF</span></h3>
+      <ol class="steps">
+        <li>Crea <code>product.md</code>: marcas, cliente, 3 políticas de retiro y tono.</li>
+        <li>Crea <code>glosario-farmacia.md</code> con <code>inclusion: manual</code>.</li>
+        <li>Pide el mensaje "tu reserva está lista" sin y con steering, y compara.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="success"><b>Éxito</b><p>El segundo resultado respeta el formato de errores, valida con zod y trae pruebas; en Negocio, usa el tono y las políticas sin pedirlos.</p></div>
+  <div class="foot"><span>SoftwareOne · Kiro</span><span class="pg"></span></div>
+  <aside class="notes">La solución de referencia está en solutions/lab2/.kiro/steering/. Reto L200: steering global en ~/.kiro/steering/ (gana el del workspace). Reto L300: steering con inclusion auto y un AGENTS.md en una subcarpeta.</aside>
+</section>
+
+<!-- ============ MÓDULO 04 ============ -->
+<section class="slide dark section">
+  <div class="top"><div class="brand" data-logo="white">SoftwareOne</div><div>Módulo 04</div></div>
+  <div class="num">04</div>
+  <h1>Reglas automáticas</h1>
+  <p class="topic">Hooks: disparadores y acciones · Kiroignore</p>
+</section>
+
+<section class="slide">
+  <div class="top"><div class="brand">SoftwareOne</div><div>04 · Reglas automáticas</div></div>
+  <div class="kicker">Hooks</div>
+  <h2>Cada vez que pasa algo, el agente reacciona</h2>
+  <div class="body">
+    <div class="flow">
+      <div class="stepbox"><h3>Disparador</h3><p>PostFileSave, PreToolUse, PostToolUse, Prompt Submit, Agent Stop, Post Task Execution o manual, con un botón.</p></div>
+      <div class="arrow">→</div>
+      <div class="stepbox"><h3>Filtro</h3><p>Patrón de archivo o de herramienta: <code>\.(ts|tsx)$</code>, <code>read</code>, <code>shell</code>, <code>@mcp</code>.</p></div>
+      <div class="arrow">→</div>
+      <div class="stepbox fill"><h3>Acción</h3><p><b>command</b>: un comando en el proyecto. <b>agent</b>: una instrucción al agente.</p></div>
+    </div>
+    <div class="grid g3">
+      <div class="card soft"><h3>Feedback rápido</h3><p>Lint y pruebas tras cada archivo que edita el agente.</p></div>
+      <div class="card soft"><h3>Guardarraíl</h3><p>En PreToolUse, una salida distinta de cero bloquea la herramienta.</p></div>
+      <div class="card ink"><h3>Kiroignore</h3><p>Deja secretos y archivos sensibles fuera del alcance del agente.</p></div>
+    </div>
+  </div>
+  <div class="foot"><span>Fuente: kiro.dev/docs · Hooks · Hook actions · Kiroignore</span><span class="pg"></span></div>
+  <aside class="notes">Los hooks viven en .kiro/hooks/*.json. Los de archivo solo reaccionan a cambios del agente, no a ediciones manuales. Las acciones command no consumen créditos; las agent sí.</aside>
+</section>
+
+<section class="slide">
+  <div class="top"><div class="brand">SoftwareOne</div><div>04 · Reglas automáticas</div></div>
+  <div class="labhead"><div><div class="kicker">Laboratorio 3</div><h2>Feedback rápido y guardarraíl</h2></div><span class="pill">Dos rutas</span></div>
+  <div class="routes">
+    <div class="route c">
+      <h3>Constructores <span>Dos hooks</span></h3>
+      <ol class="steps">
+        <li><b>Agent Hooks → +</b> → <b>Ask Kiro to create a hook</b>: <span class="q">"Cada vez que el agente guarde un .ts, corre eslint --fix y los tests relacionados"</span>.</li>
+        <li>Pide un cambio con un error de estilo y observa la corrección.</li>
+        <li>Crea un hook <code>PreToolUse</code> que bloquee la lectura de <code>.env</code> y pruébalo.</li>
+      </ol>
+    </div>
+    <div class="route">
+      <h3>Negocio <span>Reglas en palabras</span></h3>
+      <ol class="steps">
+        <li>Escribe en papel 3 reglas "cada vez que… entonces…" de tu área.</li>
+        <li>Pide a Kiro un hook: <span class="q">"Cada vez que el agente modifique negocio/politicas, actualiza el FAQ de clientes"</span>.</li>
+        <li>Lee el JSON con tu pareja: disparador y acción.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="success"><b>Éxito</b><p>El código queda formateado sin pedirlo, la lectura de <code>.env</code> es denegada y existe un hook que nació de una regla de negocio.</p></div>
+  <div class="foot"><span>SoftwareOne · Kiro</span><span class="pg"></span></div>
+  <aside class="notes">Soluciones en solutions/lab3/: hooks JSON y scripts que leen el contexto por STDIN. Retos: hooks en Prompt Submit y manual (L200); Post Tool Use que registra comandos (L300); Post Task Execution con la suite tras cada tarea; .kiroignore para .env.</aside>
+</section>
+
+<!-- ============ MÓDULO 05 ============ -->
+<section class="slide dark section">
+  <div class="top"><div class="brand" data-logo="white">SoftwareOne</div><div>Módulo 05</div></div>
+  <div class="num">05</div>
+  <h1>Conectar y estandarizar</h1>
+  <p class="topic">MCP · Agent Skills · Powers</p>
+</section>
+
+<section class="slide">
+  <div class="top"><div class="brand">SoftwareOne</div><div>05 · Conectar y estandarizar</div></div>
+  <div class="kicker">Extender al agente</div>
+  <h2>Herramientas, procedimientos o ambos</h2>
+  <div class="body">
+    <div class="grid g3">
+      <div class="card"><span class="tag">MCP</span><h3>Herramientas externas</h3><p>Servidores locales o remotos (<code>url</code>). Por proyecto en <code>.kiro/settings/mcp.json</code> o por usuario; <code>autoApprove</code> afina permisos.</p></div>
+      <div class="card"><span class="tag">Skill</span><h3>Procedimientos</h3><p>Un <code>SKILL.md</code> con instrucciones, scripts y referencias. Solo carga el nombre y la descripción hasta que se necesita.</p></div>
+      <div class="card ink"><span class="tag">Power</span><h3>Paquete completo</h3><p>Una carpeta con <code style="background:#333;color:#fff">POWER.md</code>, MCP y steering. Se activa por palabras clave de la conversación.</p></div>
+    </div>
+    <div class="card soft"><h3>¿Por qué no conectar todo?</h3><p>Cinco servidores MCP pueden cargar más de 100 herramientas antes del primer pedido y saturar el contexto. Skills y powers cargan solo lo relevante para la tarea.</p></div>
+  </div>
+  <div class="foot"><span>Fuente: kiro.dev/docs · MCP · Agent Skills · Powers</span><span class="pg"></span></div>
+</section>
+
+<section class="slide">
+  <div class="top"><div class="brand">SoftwareOne</div><div>05 · Conectar y estandarizar</div></div>
+  <div class="labhead"><div><div class="kicker">Laboratorio 4</div><h2>Un conector y un procedimiento</h2></div><span class="pill">Dos rutas</span></div>
+  <div class="routes">
+    <div class="route c">
+      <h3>Constructores <span>MCP + skill</span></h3>
+      <ol class="steps">
+        <li><b>Kiro: Open workspace MCP config</b> y agrega el servidor <code>fetch</code>.</li>
+        <li>Pide que lea una guía pública de diseño de APIs y proponga cambios.</li>
+        <li>Crea <code>.kiro/skills/pr-review/SKILL.md</code> e invócalo con <code>/pr-review</code> y con un pedido natural.</li>
+      </ol>
+    </div>
+    <div class="route">
+      <h3>Negocio <span>Skill</span></h3>
+      <ol class="steps">
+        <li>Crea <code>.kiro/skills/resumen-ejecutivo/SKILL.md</code>: contexto, decisión, impacto, riesgos y próximos pasos.</li>
+        <li>Invócalo con <code>/resumen-ejecutivo</code> sobre la spec del Lab 1.</li>
+        <li>Pruébalo sin la barra: <span class="q">"prepara el resumen para el comité"</span>.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="success"><b>Éxito</b><p>El servidor MCP aparece conectado y cada skill se activa de las dos formas.</p></div>
+  <div class="foot"><span>SoftwareOne · Kiro</span><span class="pg"></span></div>
+  <aside class="notes">Si el MCP no conecta: Output → Kiro - MCP Logs. Requiere uv instalado. Soluciones en solutions/lab4/ y solutions/negocio/. Reto L200: autoApprove, disabledTools, servidor remoto por url y config de usuario (solutions/lab4/mcp-opciones/). Reto L300: crear un power propio (solutions/lab4/powers/reservas-gpf/).</aside>
+</section>
+
+<!-- ============ MÓDULO 06 ============ -->
+<section class="slide dark section">
+  <div class="top"><div class="brand" data-logo="white">SoftwareOne</div><div>Módulo 06</div></div>
+  <div class="num">06</div>
+  <h1>Orquestar trabajo de varios pasos</h1>
+  <p class="topic">Workflows: pasos, revisiones independientes, ciclos con verificación y segundo plano · subagentes</p>
+</section>
+
+<section class="slide">
+  <div class="top"><div class="brand">SoftwareOne</div><div>06 · Orquestar trabajo de varios pasos</div></div>
+  <div class="kicker">Workflows</div>
+  <h2>Se describe el resultado; Kiro arma el proceso</h2>
+  <div class="body">
+    <div class="grid g4">
+      <div class="card"><h3>Paso</h3><p>Un agente en su propia sesión, con contexto enfocado.</p></div>
+      <div class="card"><h3>Entrega</h3><p>Un paso pasa evidencia al siguiente: informe, plan, resultado.</p></div>
+      <div class="card"><h3>Ramas</h3><p>Revisores independientes evalúan el mismo trabajo.</p></div>
+      <div class="card"><h3>Ciclo</h3><p>Se repite hasta que se verifica o hasta el tope de intentos.</p></div>
+    </div>
+    <div class="flow">
+      <div class="stepbox"><h3>Investigar</h3><p>Informe con citas.</p></div>
+      <div class="arrow">→</div>
+      <div class="stepbox"><h3>Planear</h3><p>Plan de cambios.</p></div>
+      <div class="arrow">→</div>
+      <div class="stepbox"><h3>Implementar</h3><p>Código, intento a intento.</p></div>
+      <div class="arrow">↺</div>
+      <div class="stepbox fill"><h3>Verificar</h3><p>Pruebas y revisión: si no pasa, vuelve.</p></div>
+    </div>
+    <p class="small">Corre en segundo plano y usa más tokens que un chat. Para algo corto bastan los <b>subagentes</b>, en paralelo.</p>
+  </div>
+  <div class="foot"><span>Fuente: kiro.dev/docs · Workflows</span><span class="pg"></span></div>
+  <aside class="notes">Se activa en Workspace Configuration → Workflows. Recetas incluidas: investigate (solo lectura), feature-pipeline (entrega completa) y publish-pr. Las recetas propias se guardan en .kiro/workflows/. Se puede pausar, retomar o escribirle a un paso. Subagentes: reparten trabajo en paralelo y devuelven el resultado en el mismo turno; el workflow conviene cuando la estructura y la revisión valen el costo.</aside>
+</section>
+
+<section class="slide">
+  <div class="top"><div class="brand">SoftwareOne</div><div>06 · Orquestar trabajo de varios pasos</div></div>
+  <div class="labhead"><div><div class="kicker">Laboratorio 5</div><h2>Delegar a un workflow</h2></div><span class="pill">Dos rutas</span></div>
+  <div class="routes">
+    <div class="route c">
+      <h3>Constructores <span>Investigación</span></h3>
+      <ol class="steps">
+        <li>Pide: <span class="q">"Usa un workflow para investigar cómo se calcula la disponibilidad y cómo se crean y actualizan las reservas. No modifiques el proyecto; guarda un informe con citas en .kiro/reports/reservas.md"</span>.</li>
+        <li>Abre <b>Workflows</b>, selecciona el paso y sigue trabajando en el chat principal.</li>
+        <li>Revisa el informe y confirma con <code>git status</code> que no cambió el código.</li>
+      </ol>
+    </div>
+    <div class="route">
+      <h3>Negocio <span>Riesgos</span></h3>
+      <ol class="steps">
+        <li>Pide un workflow que revise <code>negocio/</code> y tu <code>requirements.md</code>, y entregue riesgos y preguntas abiertas con citas.</li>
+        <li>Mientras corre, sigue trabajando en el chat principal.</li>
+        <li>Verifica 2 citas y convierte el riesgo principal en un requisito EARS.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="success"><b>Éxito</b><p>Informes con citas reales y el código sin cambios; el informe técnico señala el error de cantidades negativas.</p></div>
+  <div class="foot"><span>SoftwareOne · Kiro</span><span class="pg"></span></div>
+  <aside class="notes">Lanzar el workflow al inicio del laboratorio. Reto L200: escribirle al paso desde "Message this step's agent", y comparar con subagentes en un chat normal. Reto L300: rama lab5-inicio y corregir hasta que npm test pase, con tope de 5 intentos.</aside>
+</section>
+
+<!-- ============ MÓDULO 07 ============ -->
+<section class="slide dark section">
+  <div class="top"><div class="brand" data-logo="white">SoftwareOne</div><div>Módulo 07</div></div>
+  <div class="num">07</div>
+  <h1>El agente trabaja solo</h1>
+  <p class="topic">Custom agents · permisos · Kiro CLI interactivo y headless</p>
+</section>
+
+<section class="slide">
+  <div class="top"><div class="brand">SoftwareOne</div><div>07 · El agente trabaja solo</div></div>
+  <div class="kicker">Agentes y automatización</div>
+  <h2>Un rol, unas herramientas y unos límites</h2>
+  <div class="body">
+    <div class="vs">
+      <div class="card"><span class="tag">Custom agent</span><h3><code>.kiro/agents/reviewer.json</code></h3><ul class="dots"><li><b>tools:</b> qué herramientas puede usar</li><li><b>resources:</b> steering y skills que carga</li><li><b>permissions:</b> qué comandos se aprueban solos</li><li><b>prompt:</b> su rol e instrucciones</li></ul></div>
+      <div class="card ink"><span class="tag">Headless</span><h3>Sin nadie frente a la pantalla</h3><ul class="dots"><li><code style="background:#333;color:#fff">kiro-cli chat --no-interactive</code></li><li>Autenticación con <code style="background:#333;color:#fff">KIRO_API_KEY</code></li><li><code style="background:#333;color:#fff">--trust-tools</code> con IDs exactos</li><li>Salida en JSON Lines para scripts y CI</li><li>Antes, en modo interactivo: <code style="background:#333;color:#fff">/tools</code> muestra los IDs</li></ul></div>
+    </div>
+    <p class="small">Se confía en los límites, no en el agente: permisos acotados, hooks que bloquean y revisión humana del resultado.</p>
+  </div>
+  <div class="foot"><span>Fuente: kiro.dev/docs · Custom agents · Headless mode</span><span class="pg"></span></div>
+  <aside class="notes">El modo headless requiere planes Pro, Pro+, Pro Max o Power, o que el administrador habilite las API keys. Preferir --trust-tools sobre --trust-all-tools.</aside>
+</section>
+
+<section class="slide">
+  <div class="top"><div class="brand">SoftwareOne</div><div>07 · El agente trabaja solo</div></div>
+  <div class="labhead"><div><div class="kicker">Laboratorio 6</div><h2>Un revisor que trabaja sin ti</h2></div><span class="pill">Dos rutas</span></div>
+  <div class="routes">
+    <div class="route c">
+      <h3>Constructores L300 <span>CI</span></h3>
+      <ol class="steps">
+        <li>Crea <code>.kiro/agents/reviewer.json</code>: lee, no edita, usa el skill <code>pr-review</code>.</li>
+        <li>Ejecuta en headless: <code>kiro-cli chat --v3 --no-interactive --agent reviewer --trust-tools=read_file,grep_search "Revisa el último commit"</code>.</li>
+        <li>Llévalo a GitHub Actions con <code>KIRO_API_KEY</code> como secreto.</li>
+      </ol>
+    </div>
+    <div class="route">
+      <h3>Negocio <span>Oportunidades</span></h3>
+      <ol class="steps">
+        <li>Lista 3 tareas repetitivas de tu área.</li>
+        <li>Para cada una: intención, contexto que necesitaría el agente y qué no debe poder hacer.</li>
+        <li>Pide a Kiro que convierta la mejor en una spec inicial.</li>
+      </ol>
+    </div>
+  </div>
+  <div class="success"><b>Éxito</b><p>Un reporte de revisión sin archivos modificados y código de salida 0; en Negocio, una idea priorizada con su spec inicial.</p></div>
+  <div class="foot"><span>SoftwareOne · Kiro</span><span class="pg"></span></div>
+  <aside class="notes">Si no hay API key disponible, hacerlo como demostración. Soluciones en solutions/lab6/ (agente y workflow de GitHub Actions). Reto L200: kiro-cli en modo interactivo; /tools muestra los IDs exactos para --trust-tools.</aside>
+</section>
+
+<!-- ============ MÓDULO 08 ============ -->
+<section class="slide dark section">
+  <div class="top"><div class="brand" data-logo="white">SoftwareOne</div><div>Módulo 08</div></div>
+  <div class="num">08</div>
+  <h1>Cierre</h1>
+  <p class="topic">Repaso de las capacidades y cómo combinarlas</p>
+</section>
+
+<section class="slide">
+  <div class="top"><div class="brand">SoftwareOne</div><div>08 · Cierre</div></div>
+  <div class="kicker">Repaso</div>
+  <h2>Juntas forman el entorno con el que el agente trabaja bien</h2>
+  <div class="body">
+    <table>
+      <tr><th style="width:24%">Capacidad</th><th style="width:56%">Qué resuelve</th><th>Lab</th></tr>
+      <tr><td>Chat y contexto</td><td>Que el agente lea justo lo que necesita</td><td>0 / 0N</td></tr>
+      <tr><td>Specs</td><td>Que el agente sepa qué es "terminado" antes de codificar</td><td>1 / 1N</td></tr>
+      <tr><td>Steering</td><td>No repetir el contexto de GPF en cada conversación</td><td>2 / 2N</td></tr>
+      <tr><td>Hooks</td><td>Que la calidad y la seguridad se verifiquen solas</td><td>3 / 3N</td></tr>
+      <tr><td>MCP, Skills y Powers</td><td>Que use las herramientas y procedimientos del equipo</td><td>4 / 4N</td></tr>
+      <tr><td>Workflows</td><td>Trabajo de varios pasos en segundo plano, verificado</td><td>5 / 5N</td></tr>
+      <tr><td>Agentes y Kiro CLI</td><td>Permisos acotados dentro del flujo de entrega</td><td>6</td></tr>
+    </table>
+  </div>
+  <div class="foot"><span>SoftwareOne · Kiro</span><span class="pg"></span></div>
+</section>
+
+<section class="slide dark">
+  <div class="top"><div class="brand" data-logo="white">SoftwareOne</div><div>08 · Cierre</div></div>
+  <div class="kicker">Para llevarse</div>
+  <h2>Cinco ideas para la próxima semana</h2>
+  <div class="body">
+    <ul class="dots" style="gap:16px">
+      <li style="font-size:24px">Pasar de escribir el software a diseñar el entorno con el que el agente lo escribe.</li>
+      <li style="font-size:24px">La ejecución se abarató; la dirección es lo que vale: requisitos y contexto primero.</li>
+      <li style="font-size:24px">Las primeras semanas se sienten más lentas; después la ganancia se acumula.</li>
+      <li style="font-size:24px">Se confía en los límites, no en el agente.</li>
+      <li style="font-size:24px">Empezar con un equipo y una funcionalidad acotada, y comparar el resultado.</li>
+    </ul>
+  </div>
+  <div class="foot"><span>Inspirado en kiro.dev/topics/frontier-engineering y frontier-teams</span><span class="pg"></span></div>
+  <aside class="notes">Discurso del facilitador, no contenido evaluable. Cerrar con el siguiente paso: cada pareja elige una tarea real para un piloto.</aside>
+</section>
+
+<section class="slide dark cover">
+  <div class="top"><div class="brand" data-logo="white">SoftwareOne</div><div>Kiro · Corporación GPF</div></div>
+  <div class="rule"></div>
+  <h1>Gracias</h1>
+  <p class="lead" style="margin-top:20px">Preguntas y conversación abierta.</p>
+  <div class="meta">
+    <div><b>Siguiente paso</b>Una tarea real por equipo para un piloto</div>
+    <div><b>Material</b>Guía del workshop y repositorio reservas-farmacia</div>
+  </div>
+</section>
+
+</div></div>
+
+<div id="notes"><h4>Notas del facilitador</h4><div id="notes-body"></div></div>
+<div id="ui">
+  <button id="prev" title="Anterior (←)">←</button>
+  <button id="next" title="Siguiente (→)">→</button>
+  <button id="tnotes" title="Notas (N)">Notas</button>
+  <button id="tfs" title="Pantalla completa (F)">Pantalla completa</button>
+  <button id="tprint" title="Imprimir o guardar PDF">PDF</button>
+</div>
+<div id="help">← → navegar · N notas · F pantalla completa</div>
+
+<script>
+(function(){
+  var slides=[].slice.call(document.querySelectorAll('.slide'));
+  var deck=document.getElementById('deck');
+  var total=slides.length, i=0;
+
+  // Logo oficial de SoftwareOne incrustado (versión negra para láminas claras, blanca para oscuras).
+  var LOGO_BLK='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2OTIuMjk2IDI0My4zMTYiPjxwYXRoIGQ9Ik0yNDEuMTAyLDE0NC45MTRjLTEwLjkxNiw1Ny4xMTEtNjEuMjI1LDk4LjQwMi0xMTkuNDQzLDk4LjQwMkM1NC41OCwyNDMuMzE2LDAsMTg4LjczNiwwLDEyMS42NThTNTQuNTgsMCwxMjEuNjU4LDBjNTguMzc3LDAsMTA4LjUyNyw0MS4yOTEsMTE5LjQ0Myw5OC40MDJWNi44MDNoNjkuMTM1djI4LjE2QzMyOS41MzcsMTAuNzU4LDM1MS4wNTIsMCwzNzkuNjg3LDBjNTAuMzA5LDAsODEuNDc1LDM2LjM4Nyw4MS40NzUsOTUuMjM4djQuMjcxQzQ3MC42NTQsMzkuNzA5LDUxNy40ODIsMCw1NzguODY1LDBjNjcuMzk1LDAsMTEzLjQzMiw1MC43ODMsMTEzLjQzMiwxMjQuODIydjE1LjM0NmgtMTYzLjg5OGM0LjkwNCwzMy41MzksMjQuNTIxLDUyLjY4Miw1My45NDcsNTIuNjgyLDIxLjUxNiwwLDM3LjAyMC05Ljk2Nyw0MS43NjYtMjcuMDUzaDY1LjAyMWMtOS4xNzYsNDYuNTEyLTUyLjIwNyw3Ny41Mi0xMDcuNzM2LDc3LjUyLTYyLjMzMiwwLTExMC41ODQtMzkuODY3LTEyMC4yMzQtOTkuMzUydjkyLjU0OWgtNzAuMjQyVjEwMi41MTZjMC0yOC43OTMtMTQuMjM4LTQ0Ljc3MS0zOS43MDktNDQuNzcxLTIzLjg4OCwwLTM5LjcwOCwxNy43MTktMzkuNzA4LDQ0Ljc3MVYyMzYuNTE0aC03MC40di05MS42Wm0zODIuNTM1LTQ5LjA0M2MtNC40My0yOS45LTIxLjUxNi00Ny4zMDMtNDYuMTk1LTQ3LjMwMy0yNC44MzgsMC00Mi4yNCwxNy4wODYtNDcuOTM2LDQ3LjMwM2g5NC4xMzFaIi8+PHBhdGggZD0iTTkuNDM5LDEyNS42MTZoOC43NDFjLjU0MywyLjk0MiwyLjIyOCw0LjIyOCw1LjY1Niw0LjIyOCwyLjg1NiwwLDQuNzQyLTEuNDU3LDQuNzQyLTMuNjg1LDAtMS42MjgtMS4yNTctMi42ODUtMy43NzEtMy4xMTRsLTMuMzk5LS41NzFjLTcuNzk4LTEuMzE0LTExLjE5Ny00LjE5OS0xMS4xOTctOS41MTIsMC01LjYyNyw1LjQ4NC05LjU5OCwxMy4yNTQtOS41OTgsNy44MjcsMCwxMi41MTEsMy4xNzEsMTMuNTY4LDkuMjI2aC04LjY1NWMtLjQtMi4zNzEtMi4xNDItMy42NTYtNC45NzAtMy42NTYtMi42NTYsMC00LjYyNywxLjU0Mi00LjYyNywzLjYyOCwwLDEuNTQyLDEuMjI4LDIuMzk5LDQuMDg1LDIuOTE0bDMuNjg1LC42NTdjNy41NDEsMS4zNDMsMTAuODU0LDQuMzQyLDEwLjg1NCw5LjgyNiwwLDUuOTEzLTUuMzk5LDkuODgzLTEzLjQ1NCw5Ljg4My04LjYyNiwwLTEzLjkxMS0zLjcxMy0xNC41MTEtMTAuMjI2Wm0yOS40MjEtNS45MTNjMC05LjQ1NSw2Ljg1NS0xNi4zMzksMTYuMzEtMTYuMzM5LDkuMzk4LDAsMTYuMDI1LDYuNjI3LDE2LjAyNSwxNi4wODIsMCw5LjU2OS02Ljc3LDE2LjM5Ni0xNi4yNTMsMTYuMzk2cy0xNi4wODItNi42MjctMTYuMDgyLTE2LjEzOVptMjMuMDgtLjJjMC01LjY4NC0yLjY4NS05LjI4My02Ljk0MS05LjI4My00LjE5OSwwLTYuODg0LDMuNjU2LTYuODg0LDkuMzQxLDAsNS44MjcsMi42MjgsOS40MjYsNi44ODQsOS40MjYsNC4yODUsMCw2Ljk0MS0zLjY1Niw2Ljk0MS05LjQ4M1ptOC43NjktMTUuMTk2aDUuMDI3di0yLjk3MWMwLTYuODU1LDMuMTQyLTkuODgzLDEwLjE5OC05Ljg4MywxLjE3MSwwLDIuNTk5LC4xMTQsMy4zOTksLjI1N3Y2LjQ4NHEtLjUxNC0uMDI5LTEuMTQzLS4wMjljLTIuNTcxLDAtMy40MjgsLjc0My0zLjQyOCwzLjAyOHYzLjExNGg4LjkxMnYtOS41NjloOC45OTh2OS41NjloMTQuMDU0bDMuMjU2LDE0LjU2OGMuNDU3LDIuMDg1LC45MTQsNC4zMTMsMS4yODUsNi4zOTgsLjQ1Ny0yLjE3MSwxLTQuMzQyLDEuNTQyLTYuMzdsMy43OTktMTQuMzY4aDcuMzdsMy44NTYsMTQuMzY4Yy40NTcsMS43NzEsMSw0LjA1NiwxLjQ1Nyw1Ljk5OSwuNTQzLTIuOTQyLC44MjgtNC4zNywxLjItNS45OTlsMy4yNTYtMTQuNTk2aDguODg0bC04LjY4NCwzMC41OTNoLTguNjU1bC01LjE3LTE5LjU5NS01LjA1NiwxOS41OTVoLTguOTEybC02Ljc0MS0yNC4xOTRoLTYuNzQxdjEzLjkzOWMwLDIuNjI4LC45NDMsMy41MTMsMy42ODUsMy41MTMsLjgsMCwxLjIyOC0uMDI5LDIuMDI4LS4xNzF2Ni42MjdjLTEuNTE0LC4yODYtMy4yMjgsLjQ4Ni00LjU5OSwuNDg2LTcuMjU1LDAtMTAuMTEyLTIuNjg1LTEwLjExMi05LjUxMnYtMTQuODgyaC04LjkxMnYyNC4xOTRoLTkuMDI2di0yNC4xOTRoLTUuMDI3di02LjM5OFptODAuMjM4LDIyLjcwOWMwLTUuNTQyLDMuNTk5LTguMzQxLDEyLjgyNS05LjkxMiw0Ljk3LS44MjgsNi43Ny0xLjk3MSw2Ljc3LTQuMzEzcy0xLjc0Mi0zLjc3MS00LjYyNy0zLjc3MWMtMy4wNTYsMC00Ljc5OSwxLjQtNC45OTksNC4wNTZoLTguMzEyYy42NTctNi4yODQsNS4zNy05LjcxMiwxMy4zOTctOS43MTIsOC44NTUsMCwxMy4yMjUsNC4yNTYsMTMuMjI1LDEyLjkxMXYxMi4xNGMwLDMuNzcxLC4yLDQuODU2LDEuMiw2LjQ4NGgtOC42ODRjLS40MjgtMS4wMjgtLjcxNC0yLjE5OS0uODI4LTMuNzcxLTIuMzcxLDMuMTE0LTUuNDI3LDQuNTQyLTkuNjU1LDQuNTQyLTYuMzk4LDAtMTAuMzEyLTMuMjg1LTEwLjMxMi04LjY1NVptMTQuNTM5LTUuMjg0Yy00LjI4NSwuODU3LTUuODg0LDIuMDU3LTUuODg0LDQuNDI3LDAsMi4zOTksMS41NDIsMy43NzEsNC4yODUsMy43NzEsNC4xNDIsMCw2LjY4NC0yLjYyOCw2LjY4NC02LjgyN3YtMi44NTZjLTEuMzE0LC42MjgtMi4zOTksLjk0My01LjA4NCwxLjQ4NVptMTguMjI0LTE3LjQyNGg4Ljk0MXY0LjY4NWMxLjk0Mi0zLjUxMyw0LjQ4NS01LjE5OSw3LjkxMi01LjE5OSwuNCwwLDEuMjI4LC4wODYsMS45MTQsLjIyOXY3LjQ4NGMtLjU3MS0uMTQzLTEuMTcxLS4yLTIuNDI4LS4yLTQuMzk5LDAtNy4yMjcsMi44MjgtNy4yMjcsNy4yMjd2MTYuMzY3aC05LjExMnYtMzAuNTkzWm0xOC40ODEsMTUuMzk2YzAtOS43NCw2LjM5OC0xNi4zMzksMTUuODUzLTE2LjMzOSw4Ljk5OCwwLDE1LjA1Myw2Ljc0MSwxNS4wNTMsMTYuODI0djEuNTcxaC0yMS44NTJjLjYsNS4wODQsMy4yMjgsNy45NjksNy4yNTUsNy45NjksMy4wMjgsMCw0Ljk5OS0xLjQyOCw1LjY1Ni00LjAyOGg4LjUxMmMtMS4yMjgsNi4wODQtNi45NDEsMTAuMTQtMTQuMjgyLDEwLjE0LTkuNjI2LDAtMTYuMTk2LTYuNTQxLTE2LjE5Ni0xNi4xMzlabTIxLjkzOC0zLjI4NWMtLjU3MS00LjY1Ni0yLjc0Mi03LjE0MS02LjI1Ni03LjE0MXMtNS43MTMsMi40NTctNi40NTYsNy4xNDFoMTIuNzExWiIgZmlsbD0iI2ZmZiIvPjwvc3ZnPgo=';
+  var LOGO_WHT='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2OTIuMjk2IDI0My4zMTYiPjxwYXRoIGZpbGw9IiNmZmYiIGQ9Ik0yNDEuMTAyLDE0NC45MTRjLTEwLjkxNiw1Ny4xMTEtNjEuMjI1LDk4LjQwMi0xMTkuNDQzLDk4LjQwMkM1NC41OCwyNDMuMzE2LDAsMTg4LjczNiwwLDEyMS42NThTNTQuNTgsMCwxMjEuNjU4LDBjNTguMzc3LDAsMTA4LjUyNyw0MS4yOTEsMTE5LjQ0Myw5OC40MDJWNi44MDNoNjkuMTM1djI4LjE2QzMyOS41MzcsMTAuNzU4LDM1MS4wNTIsMCwzNzkuNjg3LDBjNTAuMzA5LDAsODEuNDc1LDM2LjM4Nyw4MS40NzUsOTUuMjM4djQuMjcxQzQ3MC42NTQsMzkuNzA5LDUxNy40ODIsMCw1NzguODY1LDBjNjcuMzk1LDAsMTEzLjQzMiw1MC43ODMsMTEzLjQzMiwxMjQuODIydjE1LjM0NmgtMTYzLjg5OGM0LjkwNCwzMy41MzksMjQuNTIxLDUyLjY4Miw1My45NDcsNTIuNjgyLDIxLjUxNiwwLDM3LjAyMC05Ljk2Nyw0MS43NjYtMjcuMDUzaDY1LjAyMWMtOS4xNzYsNDYuNTEyLTUyLjIwNyw3Ny41Mi0xMDcuNzM2LDc3LjUyLTYyLjMzMiwwLTExMC41ODQtMzkuODY3LTEyMC4yMzQtOTkuMzUydjkyLjU0OWgtNzAuMjQyVjEwMi41MTZjMC0yOC43OTMtMTQuMjM4LTQ0Ljc3MS0zOS43MDktNDQuNzcxLTIzLjg4OCwwLTM5LjcwOCwxNy43MTktMzkuNzA4LDQ0Ljc3MVYyMzYuNTE0aC03MC40di05MS42Wm0zODIuNTM1LTQ5LjA0M2MtNC40My0yOS45LTIxLjUxNi00Ny4zMDMtNDYuMTk1LTQ3LjMwMy0yNC44MzgsMC00Mi4yNCwxNy4wODYtNDcuOTM2LDQ3LjMwM2g5NC4xMzFaIi8+PHBhdGggZD0iTTkuNDM5LDEyNS42MTZoOC43NDFjLjU0MywyLjk0MiwyLjIyOCw0LjIyOCw1LjY1Niw0LjIyOCwyLjg1NiwwLDQuNzQyLTEuNDU3LDQuNzQyLTMuNjg1LDAtMS42MjgtMS4yNTctMi42ODUtMy43NzEtMy4xMTRsLTMuMzk5LS41NzFjLTcuNzk4LTEuMzE0LTExLjE5Ny00LjE5OS0xMS4xOTctOS41MTIsMC01LjYyNyw1LjQ4NC05LjU5OCwxMy4yNTQtOS41OTgsNy44MjcsMCwxMi41MTEsMy4xNzEsMTMuNTY4LDkuMjI2aC04LjY1NWMtLjQtMi4zNzEtMi4xNDItMy42NTYtNC45NzAtMy42NTYtMi42NTYsMC00LjYyNywxLjU0Mi00LjYyNywzLjYyOCwwLDEuNTQyLDEuMjI4LDIuMzk5LDQuMDg1LDIuOTE0bDMuNjg1LC42NTdjNy41NDEsMS4zNDMsMTAuODU0LDQuMzQyLDEwLjg1NCw5LjgyNiwwLDUuOTEzLTUuMzk5LDkuODgzLTEzLjQ1NCw5Ljg4My04LjYyNiwwLTEzLjkxMS0zLjcxMy0xNC41MTEtMTAuMjI2Wm0yOS40MjEtNS45MTNjMC05LjQ1NSw2Ljg1NS0xNi4zMzksMTYuMzEtMTYuMzM5LDkuMzk4LDAsMTYuMDI1LDYuNjI3LDE2LjAyNSwxNi4wODIsMCw5LjU2OS02Ljc3LDE2LjM5Ni0xNi4yNTMsMTYuMzk2cy0xNi4wODItNi42MjctMTYuMDgyLTE2LjEzOVptMjMuMDgtLjJjMC01LjY4NC0yLjY4NS05LjI4My02Ljk0MS05LjI4My00LjE5OSwwLTYuODg0LDMuNjU2LTYuODg0LDkuMzQxLDAsNS44MjcsMi42MjgsOS40MjYsNi44ODQsOS40MjYsNC4yODUsMCw2Ljk0MS0zLjY1Niw2Ljk0MS05LjQ4M1ptOC43NjktMTUuMTk2aDUuMDI3di0yLjk3MWMwLTYuODU1LDMuMTQyLTkuODgzLDEwLjE5OC05Ljg4MywxLjE3MSwwLDIuNTk5LC4xMTQsMy4zOTksLjI1N3Y2LjQ4NHEtLjUxNC0uMDI5LTEuMTQzLS4wMjljLTIuNTcxLDAtMy40MjgsLjc0My0zLjQyOCwzLjAyOHYzLjExNGg4LjkxMnYtOS41NjloOC45OTh2OS41NjloMTQuMDU0bDMuMjU2LDE0LjU2OGMuNDU3LDIuMDg1LC45MTQsNC4zMTMsMS4yODUsNi4zOTgsLjQ1Ny0yLjE3MSwxLTQuMzQyLDEuNTQyLTYuMzdsMy43OTktMTQuMzY4aDcuMzdsMy44NTYsMTQuMzY4Yy40NTcsMS43NzEsMSw0LjA1NiwxLjQ1Nyw1Ljk5OSwuNTQzLTIuOTQyLC44MjgtNC4zNywxLjItNS45OTlsMy4yNTYtMTQuNTk2aDguODg0bC04LjY4NCwzMC41OTNoLTguNjU1bC01LjE3LTE5LjU5NS01LjA1NiwxOS41OTVoLTguOTEybC02Ljc0MS0yNC4xOTRoLTYuNzQxdjEzLjkzOWMwLDIuNjI4LC45NDMsMy41MTMsMy42ODUsMy41MTMsLjgsMCwxLjIyOC0uMDI5LDIuMDI4LS4xNzF2Ni42MjdjLTEuNTE0LC4yODYtMy4yMjgsLjQ4Ni00LjU5OSwuNDg2LTcuMjU1LDAtMTAuMTEyLTIuNjg1LTEwLjExMi05LjUxMnYtMTQuODgyaC04LjkxMnYyNC4xOTRoLTkuMDI2di0yNC4xOTRoLTUuMDI3di02LjM5OFptODAuMjM4LDIyLjcwOWMwLTUuNTQyLDMuNTk5LTguMzQxLDEyLjgyNS05LjkxMiw0Ljk3LS44MjgsNi43Ny0xLjk3MSw2Ljc3LTQuMzEzcy0xLjc0Mi0zLjc3MS00LjYyNy0zLjc3MWMtMy4wNTYsMC00Ljc5OSwxLjQtNC45OTksNC4wNTZoLTguMzEyYy42NTctNi4yODQsNS4zNy05LjcxMiwxMy4zOTctOS43MTIsOC44NTUsMCwxMy4yMjUsNC4yNTYsMTMuMjI1LDEyLjkxMXYxMi4xNGMwLDMuNzcxLC4yLDQuODU2LDEuMiw2LjQ4NGgtOC42ODRjLS40MjgtMS4wMjgtLjcxNC0yLjE5OS0uODI4LTMuNzcxLTIuMzcxLDMuMTE0LTUuNDI3LDQuNTQyLTkuNjU1LDQuNTQyLTYuMzk4LDAtMTAuMzEyLTMuMjg1LTEwLjMxMi04LjY1NVptMTQuNTM5LTUuMjg0Yy00LjI4NSwuODU3LTUuODg0LDIuMDU3LTUuODg0LDQuNDI3LDAsMi4zOTksMS41NDIsMy43NzEsNC4yODUsMy43NzEsNC4xNDIsMCw2LjY4NC0yLjYyOCw2LjY4NC02LjgyN3YtMi44NTZjLTEuMzE0LC42MjgtMi4zOTksLjk0My01LjA4NCwxLjQ4NVptMTguMjI0LTE3LjQyNGg4Ljk0MXY0LjY4NWMxLjk0Mi0zLjUxMyw0LjQ4NS01LjE5OSw3LjkxMi01LjE5OSwuNCwwLDEuMjI4LC4wODYsMS45MTQsLjIyOXY3LjQ4NGMtLjU3MS0uMTQzLTEuMTcxLS4yLTIuNDI4LS4yLTQuMzk5LDAtNy4yMjcsMi44MjgtNy4yMjcsNy4yMjd2MTYuMzY3aC05LjExMnYtMzAuNTkzWm0xOC40ODEsMTUuMzk2YzAtOS43NCw2LjM5OC0xNi4zMzksMTUuODUzLTE2LjMzOSw4Ljk5OCwwLDE1LjA1Myw2Ljc0MSwxNS4wNTMsMTYuODI0djEuNTcxaC0yMS44NTJjLjYsNS4wODQsMy4yMjgsNy45NjksNy4yNTUsNy45NjksMy4wMjgsMCw0Ljk5OS0xLjQyOCw1LjY1Ni00LjAyOGg4LjUxMmMtMS4yMjgsNi4wODQtNi45NDEsMTAuMTQtMTQuMjgyLDEwLjE0LTkuNjI2LDAtMTYuMTk2LTYuNTQxLTE2LjE5Ni0xNi4xMzlabTIxLjkzOC0zLjI4NWMtLjU3MS00LjY1Ni0yLjc0Mi03LjE0MS02LjI1Ni03LjE0MXMtNS43MTMsMi40NTctNi40NTYsNy4xNDFoMTIuNzExWiIgZmlsbD0iIzBBMEEwQSIvPjwvc3ZnPgo=';
+  document.querySelectorAll('.brand').forEach(function(el){
+    var img=new Image(); img.alt='SoftwareOne';
+    img.src=el.getAttribute('data-logo')==='white'?LOGO_WHT:LOGO_BLK;
+    el.textContent=''; el.appendChild(img);
+  });
+
+  slides.forEach(function(s,n){var p=s.querySelector('.pg');if(p)p.textContent=(n+1)+' / '+total;});
+
+  function fit(){
+    var sx=window.innerWidth/1280, sy=window.innerHeight/720;
+    deck.style.transform='scale('+Math.min(sx,sy)+')';
+  }
+  function show(n){
+    i=Math.max(0,Math.min(total-1,n));
+    slides.forEach(function(s,k){s.classList.toggle('active',k===i);});
+    document.getElementById('progress').style.width=((i+1)/total*100)+'%';
+    var notes=slides[i].querySelector('aside.notes');
+    document.getElementById('notes-body').textContent=notes?notes.textContent:'Sin notas para esta lámina.';
+    if(location.hash!=='#'+(i+1)) history.replaceState(null,'','#'+(i+1));
+  }
+  function fs(){
+    if(!document.fullscreenElement){document.documentElement.requestFullscreen&&document.documentElement.requestFullscreen();}
+    else{document.exitFullscreen&&document.exitFullscreen();}
+  }
+  document.addEventListener('keydown',function(e){
+    var k=e.key;
+    if(k==='ArrowRight'||k==='PageDown'||k===' '){e.preventDefault();show(i+1);}
+    else if(k==='ArrowLeft'||k==='PageUp'){e.preventDefault();show(i-1);}
+    else if(k==='Home'){show(0);} else if(k==='End'){show(total-1);}
+    else if(k==='n'||k==='N'){document.body.classList.toggle('show-notes');}
+    else if(k==='f'||k==='F'){fs();}
+  });
+  document.getElementById('prev').onclick=function(){show(i-1);};
+  document.getElementById('next').onclick=function(){show(i+1);};
+  document.getElementById('tnotes').onclick=function(){document.body.classList.toggle('show-notes');};
+  document.getElementById('tfs').onclick=fs;
+  document.getElementById('tprint').onclick=function(){window.print();};
+  var tx=null;
+  document.addEventListener('touchstart',function(e){tx=e.touches[0].clientX;},{passive:true});
+  document.addEventListener('touchend',function(e){if(tx===null)return;var d=e.changedTouches[0].clientX-tx;if(Math.abs(d)>50)show(i+(d<0?1:-1));tx=null;});
+  var hideT=null;
+  function wake(){document.body.classList.add('ui-on');clearTimeout(hideT);hideT=setTimeout(function(){document.body.classList.remove('ui-on');},2500);}
+  document.addEventListener('mousemove',wake);
+  wake();
+  window.addEventListener('resize',fit);
+  fit();
+  var h=parseInt((location.hash||'').slice(1),10);
+  show(isNaN(h)?0:h-1);
+})();
+</script>
+</body>
+</html>
